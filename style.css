@@ -11,6 +11,8 @@
             --dark: #0f0f12;
             --light: #ffffff;
             --glass: rgba(255, 255, 255, 0.03);
+            --glass: rgba(255, 255, 255, 0.03);
+
         }
 
         body {
