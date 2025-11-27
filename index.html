@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - MBENDA Prince Wildmarck</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Prince Wildmarck - Portfolio</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
 </head>
 <body>
+    <canvas id="particles"></canvas>
 
-    <header class="glass">
+    <header>
         <div class="logo">MPW.</div>
         <nav>
             <a href="#about">À propos</a>
@@ -19,70 +20,180 @@
     </header>
 
     <section class="hero">
-        <div class="hero-content glass">
-            <span class="badge">Étudiant IA & Big Data</span>
-            <h1>MBENDA Prince Wildmarck</h1>
-            <p>Passionné par le développement, les bases de données et l'Intelligence Artificielle.</p>
+        <div class="hero-content">
+            <span class="badge"> Étudiant IA & Big Data</span>
+            <h1>MBENDA Prince<br>Wildmarck</h1>
+            <p>Créateur d'expériences digitales innovantes. Passionné par l'IA, le développement mobile et les solutions qui transforment le quotidien.</p>
             <div class="socials">
-                <a href="#" class="ios-icon"><i class="fab fa-github"></i></a>
-                <a href="#" class="ios-icon"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="social-btn"><i class="fab fa-github"></i></a>
+                <a href="#" class="social-btn"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="social-btn"><i class="fab fa-twitter"></i></a>
             </div>
         </div>
     </section>
 
-    <section id="projects" class="container">
-        <h2>Mes Réalisations</h2>
-        <div class="grid">
-            <div class="card glass">
-                <div class="icon-box ios-style-blue"><i class="fas fa-shopping-bag"></i></div>
+    <section id="projects" class="section">
+        <h2 class="section-title">Mes Créations</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div class="icon-box blue-gradient"><i class="fas fa-shopping-bag"></i></div>
                 <h3>Veline</h3>
-                <p>Marketplace Gabon (Android & iOS). Une solution complète pour le commerce mobile.</p>
+                <p>Marketplace révolutionnaire pour le Gabon (Android & iOS). Une expérience e-commerce fluide et moderne qui connecte acheteurs et vendeurs.</p>
             </div>
-            <div class="card glass">
-                <div class="icon-box ios-style-green"><i class="fas fa-leaf"></i></div>
+            <div class="project-card">
+                <div class="icon-box green-gradient"><i class="fas fa-leaf"></i></div>
                 <h3>TerraG</h3>
-                <p>Application Web pour la vente des produits ruraux du Gabon.</p>
+                <p>Plateforme web dédiée à la valorisation des produits ruraux gabonais. Connecter les producteurs locaux au marché digital.</p>
             </div>
-            <div class="card glass">
-                <div class="icon-box ios-style-red"><i class="fas fa-clinic-medical"></i></div>
+            <div class="project-card">
+                <div class="icon-box red-gradient"><i class="fas fa-clinic-medical"></i></div>
                 <h3>Gestion Pharmacie</h3>
-                <p>Application Desktop pour la gestion des stocks et ventes pharmaceutiques.</p>
+                <p>Solution desktop complète pour la gestion intelligente des stocks pharmaceutiques et optimisation des ventes.</p>
             </div>
-            <div class="card glass">
-                <div class="icon-box ios-style-orange"><i class="fas fa-car"></i></div>
+            <div class="project-card">
+                <div class="icon-box orange-gradient"><i class="fas fa-car"></i></div>
                 <h3>Auto-Loc</h3>
-                <p>Application Desktop de gestion de location de véhicules.</p>
+                <p>Système de gestion avancé pour la location de véhicules avec suivi en temps réel et analytics détaillés.</p>
             </div>
         </div>
     </section>
 
-    <section id="about" class="container glass-panel">
-        <div class="about-grid">
-            <div class="text">
-                <h2>À propos de moi</h2>
-                <p>J'ai 21 ans et je suis actuellement en 3ème année. Je conçois des solutions modernes alliant ergonomie et performance.</p>
+    <section id="about" class="section">
+        <div class="about-container">
+            <div class="about-text">
+                <h2>À propos</h2>
+                <p>Jeune développeur de 21 ans en 3ème année, je transforme des idées en solutions digitales impactantes. Ma passion : créer des interfaces élégantes et des systèmes intelligents qui simplifient la vie.</p>
                 <ul class="skills">
-                    <li><i class="fas fa-check-circle"></i> Intelligence Artificielle</li>
-                    <li><i class="fas fa-check-circle"></i> Développement Mobile</li>
-                    <li><i class="fas fa-check-circle"></i> Big Data</li>
+                    <li><i class="fas fa-brain"></i> Intelligence Artificielle & Machine Learning</li>
+                    <li><i class="fas fa-mobile-alt"></i> Développement Mobile (iOS & Android)</li>
+                    <li><i class="fas fa-database"></i> Big Data & Analytics</li>
+                    <li><i class="fas fa-code"></i> Full Stack Development</li>
                 </ul>
             </div>
-            <div class="photo-frame">
-                <div class="photo-placeholder">
-                    <i class="fas fa-user"></i>
-                    <p>Photo de Prince</p>
+            <div class="photo-container">
+                <div class="photo-frame">
+                    <div class="photo-placeholder">
+                        <img src="ressources/moi.jpg" alt="Prince Wildmarck" style="...">
+                        <i class="fas fa-user"></i>
+                        <p>Prince Wildmarck</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <footer id="contact">
-        <p>Contactez-moi</p>
+        <p>Travaillons Ensemble 💼</p>
         <div class="contact-info">
             <span><i class="fab fa-whatsapp"></i> 077 13 15 77</span>
             <span><i class="fas fa-envelope"></i> amazing444yt@gmail.com</span>
         </div>
     </footer>
 
+    <script>
+        // PARTICLE SYSTEM
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 80;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(108, 92, 231, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach((particle, index) => {
+                particle.update();
+                particle.draw();
+
+                // Connect nearby particles
+                for (let j = index + 1; j < particles.length; j++) {
+                    const dx = particles[j].x - particle.x;
+                    const dy = particles[j].y - particle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(162, 155, 254, ${0.2 * (1 - distance / 100)})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particle.x, particle.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // SMOOTH SCROLL
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // PARALLAX EFFECT ON MOUSE MOVE
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.project-card');
+            const mouseX = e.clientX / window.innerWidth - 0.5;
+            const mouseY = e.clientY / window.innerHeight - 0.5;
+
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const cardX = (rect.left + rect.width / 2) / window.innerWidth - 0.5;
+                const cardY = (rect.top + rect.height / 2) / window.innerHeight - 0.5;
+                
+                const deltaX = (mouseX - cardX) * 20;
+                const deltaY = (mouseY - cardY) * 20;
+                
+                card.style.transform = `translateY(-10px) perspective(1000px) rotateX(${-deltaY}deg) rotateY(${deltaX}deg)`;
+            });
+        });
+    </script>
 </body>
 </html>
