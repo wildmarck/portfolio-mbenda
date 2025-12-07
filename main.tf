@@ -26,7 +26,7 @@ resource "docker_image" "nginx" {
 resource "docker_container" "site_web" {
   image = docker_image.nginx.image_id
   name  = var.container_name
-  
+
   ports {
     internal = 80
     external = 8080

@@ -1,0 +1,79 @@
+name: CI/CD Pipeline - Portfolio
+
+# Déclencheurs : Quand est-ce que ce pipeline s'active ?
+# 1. À chaque push sur la branche main
+# 2. À chaque Pull Request vers main (pour tester avant de fusionner)
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # --- JOB 1 : CONTRÔLE QUALITÉ ---
+  quality-gate:
+    name: 🛡️ Terraform & Code Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Installation de Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Vérifie si le code Terraform est bien formaté
+      # Si tu as oublié "terraform fmt" en local, ça plantera ici !
+      - name: Vérification du formatage Terraform
+        run: terraform fmt -check
+
+  # --- JOB 2 : LIVRAISON DOCKER (MODERNE) ---
+  docker-delivery:
+    name: 🐳 Build & Push Docker Hub
+    needs: quality-gate # Attend que le contrôle qualité soit vert
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Connexion à Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build et Push de l'image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # On taggue avec "latest" ET avec le SHA du commit (versioning précis)
+          tags: |
+            wildmarckgamming/portfolio:latest
+            wildmarckgamming/portfolio:${{ github.sha }}
+
+  # --- JOB 3 : DÉPLOIEMENT FTP (LEGACY) ---
+  legacy-deploy:
+    name: 🚀 Deploy to InfinityFree (FTP)
+    needs: quality-gate # Attend aussi le contrôle qualité
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Envoi des fichiers via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # InfinityFree demande souvent de mettre les fichiers dans "htdocs"
+          server-dir: /htdocs/ 
+          # Attention : Si ton site est dans un sous-dossier local, change "./" ci-dessous
+          local-dir: ./ 
+          protocol: ftp
+          exclude: |
+            **/.git*
+            **/.github*
+            **/Dockerfile
+            **/main.tf
+            **/README.md
