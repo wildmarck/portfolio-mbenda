@@ -3,329 +3,499 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prince Wildmarck | Architecte Digital & Data Base</title>
+    <title>Prince Wildmarck | L'Exploration Digitale</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <style>
+        :root {
+            --primary: #00e5ff;
+            --secondary: #2979ff;
+            --suit-blue: #87CEEB; /* Bleu ciel tenue */
+            --white: #ffffff;
+            --dark: #0a0a0a;
+            --glass: rgba(10, 10, 10, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Curseur personnalisé */ }
+
+        body {
+            overflow: hidden; /* Le scroll est géré par le jeu */
+            background: var(--dark);
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--white);
+        }
+
+        /* --- UI & HUD (Heads Up Display) --- */
+        #game-ui {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; /* Laisse passer les clics vers le canvas 3D */
+            z-index: 10;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px; height: 40px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        nav {
+            position: absolute;
+            top: 2rem;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 4rem;
+            pointer-events: auto;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        .nav-menu button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.7);
+            padding: 10px 20px;
+            margin-left: 10px;
+            font-family: 'Orbitron';
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+
+        .nav-menu button:hover, .nav-menu button.active {
+            background: var(--primary);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* --- CONTENU --- */
+        .section-content {
+            position: absolute;
+            top: 50%; left: 10%;
+            transform: translateY(-50%);
+            max-width: 500px;
+            opacity: 0;
+            pointer-events: auto;
+            transition: opacity 0.5s;
+            display: none; /* Caché par défaut */
+        }
+
+        .section-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        h1 {
+            font-family: 'Orbitron';
+            font-size: 4rem;
+            line-height: 1;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        h1 span { color: transparent; -webkit-text-stroke: 1px var(--primary); }
+
+        h2 { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
+
+        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem; color: #ccc; }
+
+        .stats-hud {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1rem;
+        }
+
+        .stat h3 { font-size: 2rem; font-family: 'Orbitron'; color: var(--suit-blue); }
+        .stat span { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- LOADING SCREEN --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 1s ease-out;
+        }
+        .loader-bar { width: 200px; height: 2px; background: #333; margin-top: 20px; position: relative; }
+        .loader-progress { position: absolute; left: 0; top: 0; height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
+
+        /* --- CONTROLS INSTRUCTION --- */
+        .controls-hint {
+            position: absolute;
+            bottom: 2rem; left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0.7;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+        .key { border: 1px solid white; padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
+
+        canvas { display: block; width: 100vw; height: 100vh; }
+    </style>
 </head>
 <body>
+
+    <div id="loader">
+        <div style="font-family: 'Orbitron'; letter-spacing: 5px;">BY WILDMARCK 2K25</div>
+        <div class="loader-bar"><div class="loader-progress" id="progress"></div></div>
+        <div style="margin-top: 10px; font-size: 10px; color: #666;">INITIALISATION DU MONDE...</div>
+    </div>
+
+    <div class="cursor-follower"></div>
+
+    <div id="game-ui">
+        <nav>
+            <div class="logo">MPW<span style="color:var(--primary)">.</span></div>
+            <div class="nav-menu">
+                <button onclick="navigateTo('home')" class="active">QG Principal</button>
+                <button onclick="navigateTo('skills')">Arsenal</button>
+                <button onclick="navigateTo('projects')">Missions</button>
+                <button onclick="navigateTo('contact')">Transmission</button>
+            </div>
+        </nav>
+
+        <div id="sec-home" class="section-content active">
+            <div class="badge" style="background:rgba(0,229,255,0.1); display:inline-block; padding: 5px 10px; margin-bottom: 20px; border: 1px solid var(--primary);">
+                ÉTUDIANT INGÉNIEUR IA
+            </div>
+            <h1>Prince <br><span>Wildmarck</span></h1>
+            <p>Architecte Digital & Créateur d'Intelligences. Bienvenue dans mon univers. Naviguez pour explorer mes compétences comme dans un monde ouvert.</p>
+            <div class="stats-hud">
+                <div class="stat"><h3>NVL.3</h3><span>Année Ingénieur</span></div>
+                <div class="stat"><h3>15+</h3><span>Projets Déployés</span></div>
+            </div>
+        </div>
+
+        <div id="sec-skills" class="section-content">
+            <h2>Arsenal Tech</h2>
+            <p>Mes armes de choix pour conquérir le digital.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="border-left: 2px solid var(--primary); padding-left: 15px;">
+                    <h4 style="color:white; margin-bottom:5px;">IA & Data</h4>
+                    <span style="color:#888; font-size: 0.9rem;">Python, TensorFlow, PyTorch</span>
+                </div>
+                <div style="border-left: 2px solid var(--suit-blue); padding-left: 15px;">
+                    <h4 style="color:white; margin-bottom:5px;">Web & Mobile</h4>
+                    <span style="color:#888; font-size: 0.9rem;">Flutter, React, Three.js</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="sec-projects" class="section-content">
+            <h2>Missions Accomplies</h2>
+            <p>Sélection de projets à haut impact.</p>
+            <div style="margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
+                <h3 style="color: var(--primary);">Veline Market</h3>
+                <p style="margin: 10px 0;">Marketplace boostée à l'IA pour la recommandation.</p>
+                <small style="color: var(--suit-blue);">FLUTTER • FIREBASE</small>
+            </div>
+            <div style="margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
+                <h3 style="color: var(--primary);">TerraG Agritech</h3>
+                <p style="margin: 10px 0;">Plateforme de connexion agriculteurs-consommateurs.</p>
+                <small style="color: var(--suit-blue);">REACT • MONGODB</small>
+            </div>
+            <div style="margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
+                <h3 style="color: var(--primary);">PharmaManager</h3>
+                <p style="margin: 10px 0;">Application de gestion de pharmacie.</p>
+                <small style="color: var(--suit-blue);">C# • MYSQL</small>
+            </div>
+        </div>
+
+        <div id="sec-contact" class="section-content">
+            <h2>Canal Sécurisé</h2>
+            <p>Prêt à collaborer sur une mission classée "Impossible" ?</p>
+            <a href="mailto:amazing444yt@gmail.com" style="display:inline-block; background: var(--white); color: black; padding: 15px 30px; text-decoration: none; font-weight: bold; font-family: 'Orbitron';">
+                INITIER LE PROTOCOLE MAIL
+            </a>
+            <div style="margin-top: 30px; font-size: 2rem;">
+                <i class="fab fa-whatsapp" style="margin-right: 20px;"></i>
+                <i class="fab fa-linkedin"></i>
+            </div>
+        </div>
+
+        <div class="controls-hint">
+            <span class="key">CLIC</span> SUR LE MENU POUR DÉPLACER L'AVATAR
+        </div>
+    </div>
+
+    <canvas id="world"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     
-    <canvas id="neural-network"></canvas>
-    
-    <div class="gradient-overlay"></div>
-
-    <nav class="navbar">
-        <div class="logo">MPW<span class="dot">.</span></div>
-        <div class="nav-links">
-            <a href="#about" class="active">À Propos</a>
-            <a href="#company">Devs Solutions</a>
-            <a href="#skills">Expertise</a>
-            <a href="#projects">Réalisations</a>
-            <a href="#contact" class="cta-btn">Me Contacter</a>
-        </div>
-        <div class="menu-btn"><i class="fas fa-bars"></i></div>
-    </nav>
-
-    <section class="hero">
-        <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
-            <div class="badge-container">
-                <span class="badge">Étudiant Ingénieur IA & Big Data</span>
-                <span class="badge-outline">3ème Année</span>
-            </div>
-            <h1>MBENDA Prince <br><span class="text-gradient">Wildmarck</span></h1>
-            <p class="subtitle">
-                Je ne me contente pas de coder. Je conçois l'intelligence de demain.
-                Spécialiste en architectures complexes, développement mobile natif et écosystèmes digitaux.
-            </p>
-            <div class="cta-group">
-                <a href="#projects" class="btn-primary">Voir mes travaux <i class="fas fa-arrow-right"></i></a>
-                <a href="#contact" class="btn-secondary">Collaborer</a>
-            </div>
-            
-            <div class="stats-row">
-                <div class="stat-item">
-                    <span class="stat-num">4+</span>
-                    <span class="stat-label">Années de Code</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-num">15+</span>
-                    <span class="stat-label">Projets Majeurs</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-num">100%</span>
-                    <span class="stat-label">Engagement</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="hero-visual" data-aos="fade-left" data-aos-duration="1200">
-            <div class="img-frame-tech">
-                <img src="ressources/moi.jpeg" alt="Prince Wildmarck" class="profile-img">
-                <div class="floating-card c1">
-                    <i class="fas fa-brain"></i>
-                    <span>IA Architect</span>
-                </div>
-                <div class="floating-card c2">
-                    <i class="fas fa-code"></i>
-                    <span>FullStack</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="scroll-down">
-            <span>Explorer</span>
-            <i class="fas fa-chevron-down"></i>
-        </div>
-    </section>
-
-    <section id="company" class="company-section">
-        <div class="container">
-            <div class="company-wrapper" data-aos="zoom-in">
-                <div class="company-logo-area">
-                    <img src="ressources/logo.jpeg" alt="Devs Solutions Tech" class="company-logo" style="border-radius: 30%;">
-                </div>
-                <div class="company-info">
-                    <span class="section-tag">Mon Entreprise</span>
-                    <h2>Devs Solutions Tech</h2>
-                    <p class="lead">Le Hub de l'Innovation Digitale au Gabon.</p>
-                    <p>
-                        Fondateur et Lead Developer, je dirige une structure dédiée à la transformation numérique des entreprises. 
-                        Chez <strong>Devs Solutions Tech</strong>, nous repoussons les limites du possible en fusionnant design 
-                        avant-gardiste et algorithmes puissants.
-                    </p>
-                    <ul class="company-features">
-                        <li><i class="fas fa-check-circle"></i> Stratégie Digitale & Consulting</li>
-                        <li><i class="fas fa-check-circle"></i> Développement de Systèmes Complexes</li>
-                        <li><i class="fas fa-check-circle"></i> Intégration IA & Automatisation</li>
-                    </ul>
-                    <a href="https://devs-solutions.tech" target="_blank" class="link-arrow">Visiter le site officiel <i class="fas fa-external-link-alt"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="skills" class="section">
-        <div class="container">
-            <h2 class="section-title" data-aos="fade-up">Arsenal Technologique</h2>
-            <div class="skills-grid">
-                <div class="skill-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="icon-wrapper color-1"><i class="fas fa-robot"></i></div>
-                    <h3>Intelligence Artificielle</h3>
-                    <p>Machine Learning, Deep Learning, Analyse prédictive et Traitement du langage naturel (NLP).</p>
-                    <div class="tags">
-                        <span>Python</span><span>TensorFlow</span><span>PyTorch</span>
-                    </div>
-                </div>
-                <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="icon-wrapper color-2"><i class="fas fa-mobile-screen"></i></div>
-                    <h3>Développement Mobile</h3>
-                    <p>Création d'applications natives et cross-platform performantes avec des UX/UI soignées.</p>
-                    <div class="tags">
-                        <span>Flutter</span><span>React Native</span><span>Swift</span>
-                    </div>
-                </div>
-                <div class="skill-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="icon-wrapper color-3"><i class="fas fa-server"></i></div>
-                    <h3>Backend & Big Data</h3>
-                    <p>Architectures robustes capables de gérer des millions de données en temps réel.</p>
-                    <div class="tags">
-                        <span>Node.js</span><span>Django</span><span>MongoDB</span>
-                    </div>
-                </div>
-                <div class="skill-card" data-aos="fade-up" data-aos-delay="400">
-                    <div class="icon-wrapper color-4"><i class="fas fa-laptop-code"></i></div>
-                    <h3>Web & Desktop</h3>
-                    <p>Solutions logicielles complètes pour la gestion d'entreprise et plateformes SaaS.</p>
-                    <div class="tags">
-                        <span>React</span><span>Electron</span><span>Vue.js</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="projects" class="section dark-bg">
-        <div class="container">
-            <div class="header-flex">
-                <h2 class="section-title" data-aos="fade-right">Projets Phares</h2>
-                <p class="section-desc" data-aos="fade-left">Une sélection de solutions déployées qui impactent le marché.</p>
-            </div>
-            
-            <div class="projects-showcase">
-                <article class="project-row" data-aos="fade-up">
-                    <div class="project-content">
-                        <div class="project-number">01</div>
-                        <h3>Veline Market</h3>
-                        <p class="project-cat">E-Commerce • Mobile • IA</p>
-                        <p class="project-details">
-                            Bien plus qu'une marketplace. Veline redéfinit l'achat en ligne au Gabon avec un algorithme de recommandation personnalisé et une interface fluide. Disponible sur iOS et Android.
-                        </p>
-                        <div class="tech-stack">
-                            <span>Flutter</span><span>Firebase</span><span>Node.js</span>
-                        </div>
-                        <a href="#" class="btn-text">Voir le cas d'étude <i class="fas fa-long-arrow-alt-right"></i></a>
-                    </div>
-                    <div class="project-visual p-blue">
-                        <i class="fas fa-shopping-bag big-icon"></i>
-                    </div>
-                </article>
-
-                <article class="project-row reverse" data-aos="fade-up">
-                    <div class="project-content">
-                        <div class="project-number">02</div>
-                        <h3>TerraG Agritech</h3>
-                        <p class="project-cat">Web Platform • Social Impact</p>
-                        <p class="project-details">
-                            La digitalisation au service de l'agriculture. TerraG connecte directement les producteurs ruraux aux consommateurs urbains, supprimant les intermédiaires et augmentant les revenus locaux.
-                        </p>
-                        <div class="tech-stack">
-                            <span>React</span><span>Express</span><span>MongoDB</span>
-                        </div>
-                        <a href="#" class="btn-text">Voir le cas d'étude <i class="fas fa-long-arrow-alt-right"></i></a>
-                    </div>
-                    <div class="project-visual p-green">
-                        <i class="fas fa-leaf big-icon"></i>
-                    </div>
-                </article>
-
-                <article class="project-row" data-aos="fade-up">
-                    <div class="project-content">
-                        <div class="project-number">03</div>
-                        <h3>PharmaCore</h3>
-                        <p class="project-cat">Desktop Software • B2B</p>
-                        <p class="project-details">
-                            Un ERP complet pour la gestion pharmaceutique : suivi des stocks en temps réel, alertes de péremption intelligentes et analytics de ventes détaillés pour optimiser le chiffre d'affaires.
-                        </p>
-                        <div class="tech-stack">
-                            <span>Electron</span><span>Python</span><span>SQL</span>
-                        </div>
-                        <a href="#" class="btn-text">Voir le cas d'étude <i class="fas fa-long-arrow-alt-right"></i></a>
-                    </div>
-                    <div class="project-visual p-red">
-                        <i class="fas fa-clinic-medical big-icon"></i>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="section contact-section">
-        <div class="container">
-            <div class="contact-box" data-aos="zoom-in-up">
-                <h2>Prêt à innover ?</h2>
-                <p>Que ce soit pour un projet complexe ou une collaboration stratégique, ma boîte mail est ouverte.</p>
-                
-                <div class="contact-methods">
-                    <a href="mailto:amazing444yt@gmail.com" class="contact-pill">
-                        <i class="fas fa-envelope"></i> amazing444yt@gmail.com
-                    </a>
-                    <a href="https://wa.me/241077131577" class="contact-pill">
-                        <i class="fab fa-whatsapp"></i> +241 077 13 15 77
-                    </a>
-                </div>
-
-                <div class="social-footer">
-                    <a href="#"><i class="fab fa-github"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Prince Wildmarck Mbenda. All rights reserved.</p>
-        <p class="powered">Powered by <a href="https://devs-solutions.tech">Devs Solutions Tech</a></p>
-    </footer>
-
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Init Animations
-        AOS.init({
-            once: true,
-            offset: 100,
-            duration: 800
-        });
+        // --- CONFIGURATION DU MONDE ---
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x000000, 0.02); // Brouillard pour profondeur
 
-        // Advanced Particle Network Logic
-        const canvas = document.getElementById('neural-network');
-        const ctx = canvas.getContext('2d');
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('world'), antialias: true, alpha: true });
         
-        let width, height;
-        let particles = [];
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
+        // --- LUMIÈRES ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0x00e5ff, 2, 50);
+        pointLight.position.set(5, 5, 5);
+        scene.add(pointLight);
+
+        // --- SOL "GRID" (TRON LEGACY STYLE) ---
+        const gridHelper = new THREE.GridHelper(200, 100, 0x00e5ff, 0x111111);
+        scene.add(gridHelper);
+
+        const planeGeometry = new THREE.PlaneGeometry(200, 200, 100, 100);
+        const planeMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x0a0a0a, 
+            roughness: 0.8,
+            metalness: 0.5,
+            wireframe: false
+        });
+        const floor = new THREE.Mesh(planeGeometry, planeMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -0.1;
+        scene.add(floor);
+
+        // --- L'AVATAR (L'ÉTUDIANT) ---
+        // Note: Ici je construis un avatar abstrait géométrique aux couleurs demandées
+        // Pour un vrai réalisme "Red Dead", il faudrait charger un fichier .glb ici.
+        const avatarGroup = new THREE.Group();
+
+        // Jambes (Pantalon Bleu Ciel)
+        const legGeo = new THREE.BoxGeometry(0.3, 0.9, 0.3);
+        const pantsMat = new THREE.MeshStandardMaterial({ color: 0x87CEEB }); // Bleu ciel
+        const leftLeg = new THREE.Mesh(legGeo, pantsMat);
+        leftLeg.position.set(-0.2, 0.45, 0);
+        const rightLeg = new THREE.Mesh(legGeo, pantsMat);
+        rightLeg.position.set(0.2, 0.45, 0);
+
+        // Corps (Chemise Blanche + Veste Bleu Ciel)
+        const bodyGeo = new THREE.BoxGeometry(0.8, 0.9, 0.4);
+        const jacketMat = new THREE.MeshStandardMaterial({ color: 0x87CEEB }); // Veste bleu ciel
+        const shirtMat = new THREE.MeshStandardMaterial({ color: 0xffffff }); // Chemise blanche
+        const torso = new THREE.Mesh(bodyGeo, jacketMat);
+        torso.position.y = 1.35;
+        
+        // "Cravate" (détail)
+        const tieGeo = new THREE.BoxGeometry(0.1, 0.6, 0.05);
+        const tieMat = new THREE.MeshStandardMaterial({ color: 0x2979ff }); // Bleu plus foncé
+        const tie = new THREE.Mesh(tieGeo, tieMat);
+        tie.position.set(0, 1.4, 0.22);
+
+        // Tête
+        const headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+        const skinMat = new THREE.MeshStandardMaterial({ color: 0xffccaa });
+        const head = new THREE.Mesh(headGeo, skinMat);
+        head.position.y = 2;
+
+        avatarGroup.add(leftLeg, rightLeg, torso, tie, head);
+        
+        // Halo lumineux autour de l'étudiant (Effet "Héros")
+        const glowGeo = new THREE.SphereGeometry(2, 32, 32);
+        const glowMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.05, side: THREE.BackSide });
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        avatarGroup.add(glow);
+
+        scene.add(avatarGroup);
+
+        // --- DÉCOR (PARTICULES DE DONNÉES) ---
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 100;
         }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.1,
+            color: 0x00e5ff,
+            transparent: true,
+            opacity: 0.8
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 2;
-            }
+        // --- LOGIQUE DE JEU ---
+        
+        // Positions des "Niveaux" (Sections) dans le monde 3D
+        const levels = {
+            home: { x: 0, z: 0, rotY: 0 },
+            skills: { x: 10, z: -10, rotY: -Math.PI / 4 },
+            projects: { x: -10, z: -20, rotY: Math.PI / 4 },
+            contact: { x: 0, z: -30, rotY: 0 }
+        };
 
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
+        let currentLevel = 'home';
+        let isMoving = false;
 
-            draw() {
-                ctx.fillStyle = 'rgba(108, 99, 255, 0.5)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
+        // Position initiale Caméra
+        camera.position.set(0, 3, 6);
+        camera.lookAt(0, 1, 0);
 
-        function initParticles() {
-            particles = [];
-            for (let i = 0; i < 60; i++) {
-                particles.push(new Particle());
-            }
-        }
-
+        // Animation Loop
+        let time = 0;
         function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            particles.forEach((p, i) => {
-                p.update();
-                p.draw();
-                
-                // Connections
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const d = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (d < 150) {
-                        ctx.strokeStyle = `rgba(108, 99, 255, ${0.1 * (1 - d/150)})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.stroke();
-                    }
-                }
-            });
             requestAnimationFrame(animate);
-        }
+            time += 0.01;
 
-        window.addEventListener('resize', () => { resize(); initParticles(); });
-        resize();
-        initParticles();
+            // Animation Idle du personnage (Respiration)
+            if(!isMoving) {
+                avatarGroup.position.y = Math.sin(time * 2) * 0.05;
+                torso.rotation.y = Math.sin(time) * 0.05;
+            } else {
+                // Animation de marche (basique)
+                leftLeg.rotation.x = Math.sin(time * 10) * 0.5;
+                rightLeg.rotation.x = Math.cos(time * 10) * 0.5;
+            }
+
+            // Flottement des particules
+            particlesMesh.rotation.y = time * 0.05;
+
+            renderer.render(scene, camera);
+        }
         animate();
 
-        // Navbar Scroll Effect
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('.navbar');
-            if (window.scrollY > 50) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
+        // --- NAVIGATION INTERACTIVE ---
+        window.navigateTo = function(sectionKey) {
+            if (currentLevel === sectionKey) return;
+            
+            // UI Update
+            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Masquer le contenu actuel
+            document.querySelectorAll('.section-content').forEach(el => {
+                el.classList.remove('active');
+                gsap.to(el, { opacity: 0, duration: 0.3 });
+            });
+
+            isMoving = true;
+            const target = levels[sectionKey];
+
+            // 1. Déplacer l'Avatar vers la position cible
+            gsap.to(avatarGroup.position, {
+                x: target.x,
+                z: target.z,
+                duration: 2,
+                ease: "power2.inOut",
+                onUpdate: () => {
+                    // La caméra suit l'avatar façon "Third Person Shooter"
+                    gsap.to(camera.position, {
+                        x: avatarGroup.position.x,
+                        y: avatarGroup.position.y + 3,
+                        z: avatarGroup.position.z + 6,
+                        duration: 0.5
+                    });
+                    camera.lookAt(avatarGroup.position.x, avatarGroup.position.y + 1, avatarGroup.position.z);
+                }
+            });
+
+            // 2. Rotation de l'avatar
+            gsap.to(avatarGroup.rotation, {
+                y: target.rotY,
+                duration: 1.5,
+                ease: "power1.out"
+            });
+
+            // 3. Fin du mouvement : Afficher le nouveau texte
+            setTimeout(() => {
+                isMoving = false;
+                currentLevel = sectionKey;
+                const newSection = document.getElementById('sec-' + sectionKey);
+                newSection.classList.add('active');
+                gsap.fromTo(newSection, 
+                    { x: -50, opacity: 0 }, 
+                    { x: 0, opacity: 1, duration: 0.5 }
+                );
+            }, 2000);
+        };
+
+        // --- CURSOR FOLLOWER ---
+        const cursor = document.querySelector('.cursor-follower');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1
+            });
+            
+            // Parallaxe légère de la caméra sur la souris
+            if(!isMoving) {
+                gsap.to(camera.rotation, {
+                    y: (e.clientX / window.innerWidth - 0.5) * 0.2,
+                    x: (e.clientY / window.innerHeight - 0.5) * 0.2,
+                    duration: 1
+                });
+            }
         });
+
+        // Hover effect sur les liens pour agrandir le curseur
+        document.querySelectorAll('button, a').forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                gsap.to(cursor, { width: 80, height: 80, background: 'rgba(255,255,255,0.1)', duration: 0.3 });
+            });
+            link.addEventListener('mouseleave', () => {
+                gsap.to(cursor, { width: 40, height: 40, background: 'transparent', duration: 0.3 });
+            });
+        });
+
+        // --- LOADING SEQUENCE ---
+        window.addEventListener('load', () => {
+            const progress = document.getElementById('progress');
+            const loader = document.getElementById('loader');
+            
+            let w = 0;
+            const int = setInterval(() => {
+                w += Math.random() * 10;
+                if(w > 100) w = 100;
+                progress.style.width = w + '%';
+                
+                if(w === 100) {
+                    clearInterval(int);
+                    setTimeout(() => {
+                        gsap.to(loader, { opacity: 0, onComplete: () => loader.style.display = 'none' });
+                    }, 500);
+                }
+            }, 100);
+        });
+
+        // Resize Handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
     </script>
 </body>
 </html>

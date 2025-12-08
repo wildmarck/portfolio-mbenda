@@ -1,0 +1,8 @@
+.git
+.github
+.terraform
+terraform.tfstate
+terraform.lock.hcl
+Dockerfile
+main.tf
+README.md
