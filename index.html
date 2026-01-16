@@ -3,35 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prince Wildmarck | L'Exploration Digitale</title>
+    <title>Prince Wildmarck | Portfolio Développeur</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
             --primary: #00e5ff;
             --secondary: #2979ff;
-            --suit-blue: #87CEEB; /* Bleu ciel tenue */
+            --suit-blue: #87CEEB;
             --white: #ffffff;
             --dark: #0a0a0a;
             --glass: rgba(10, 10, 10, 0.6);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; /* Curseur personnalisé */ }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            overflow: hidden; /* Le scroll est géré par le jeu */
             background: var(--dark);
             font-family: 'Rajdhani', sans-serif;
             color: var(--white);
+            overflow-x: hidden;
         }
 
-        /* --- UI & HUD (Heads Up Display) --- */
+        /* --- RESPONSIVE MOBILE --- */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 1rem !important;
+                top: 1rem !important;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-menu {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            
+            .nav-menu button {
+                padding: 8px 12px !important;
+                font-size: 0.7rem !important;
+                margin: 0 !important;
+            }
+            
+            .section-content {
+                left: 5% !important;
+                right: 5% !important;
+                width: 90% !important;
+                max-width: none !important;
+                padding: 1rem !important;
+                background: rgba(0, 0, 0, 0.8) !important;
+                border-radius: 10px;
+                backdrop-filter: blur(10px);
+            }
+            
+            h1 {
+                font-size: 2.5rem !important;
+            }
+            
+            h2 {
+                font-size: 1.8rem !important;
+            }
+            
+            .stats-hud {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            #sec-contact {
+                text-align: center;
+            }
+            
+            .contact-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                margin-top: 1.5rem;
+            }
+            
+            .contact-btn {
+                width: 100% !important;
+                text-align: center;
+            }
+        }
+
+        /* --- UI & HUD --- */
         #game-ui {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; /* Laisse passer les clics vers le canvas 3D */
+            pointer-events: none;
             z-index: 10;
         }
 
@@ -56,6 +120,7 @@
             align-items: center;
             padding: 0 4rem;
             pointer-events: auto;
+            z-index: 100;
         }
 
         .logo {
@@ -78,6 +143,7 @@
             font-size: 0.8rem;
             transition: all 0.3s;
             clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            pointer-events: auto;
         }
 
         .nav-menu button:hover, .nav-menu button.active {
@@ -96,7 +162,8 @@
             opacity: 0;
             pointer-events: auto;
             transition: opacity 0.5s;
-            display: none; /* Caché par défaut */
+            display: none;
+            pointer-events: auto;
         }
 
         .section-content.active {
@@ -116,7 +183,9 @@
 
         h2 { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; }
 
-        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 2rem; color: #ccc; }
+        h3 { font-family: 'Orbitron'; color: var(--primary); margin: 1rem 0 0.5rem; }
+
+        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 1rem; color: #ccc; }
 
         .stats-hud {
             display: flex;
@@ -128,6 +197,75 @@
 
         .stat h3 { font-size: 2rem; font-family: 'Orbitron'; color: var(--suit-blue); }
         .stat span { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- CONTACT SECTION --- */
+        .contact-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--white);
+            padding: 12px 24px;
+            text-decoration: none;
+            font-family: 'Orbitron';
+            font-weight: bold;
+            transition: all 0.3s;
+            min-width: 200px;
+        }
+
+        .contact-btn.whatsapp {
+            background: #25D366;
+            border-color: #25D366;
+        }
+
+        .contact-btn.email {
+            background: var(--secondary);
+            border-color: var(--secondary);
+        }
+
+        .contact-btn.company {
+            background: var(--suit-blue);
+            border-color: var(--suit-blue);
+        }
+
+        .contact-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* --- PROJECT CARDS --- */
+        .project-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .tech-tag {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Orbitron';
+        }
 
         /* --- LOADING SCREEN --- */
         #loader {
@@ -143,104 +281,211 @@
         .loader-bar { width: 200px; height: 2px; background: #333; margin-top: 20px; position: relative; }
         .loader-progress { position: absolute; left: 0; top: 0; height: 100%; background: var(--primary); width: 0%; transition: width 0.2s; }
 
-        /* --- CONTROLS INSTRUCTION --- */
-        .controls-hint {
-            position: absolute;
-            bottom: 2rem; left: 50%;
+        canvas { display: block; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; }
+        
+        /* --- SCROLL INDICATOR --- */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
             transform: translateX(-50%);
-            text-align: center;
-            opacity: 0.7;
+            color: var(--primary);
             font-size: 0.8rem;
-            letter-spacing: 2px;
+            text-align: center;
             pointer-events: none;
+            z-index: 10;
         }
-        .key { border: 1px solid white; padding: 2px 6px; border-radius: 4px; margin: 0 2px; }
-
-        canvas { display: block; width: 100vw; height: 100vh; }
+        
+        .mobile-only { display: none; }
+        
+        @media (max-width: 768px) {
+            .mobile-only { display: block; }
+            .desktop-only { display: none; }
+            .cursor-follower { display: none; }
+        }
     </style>
 </head>
 <body>
 
     <div id="loader">
-        <div style="font-family: 'Orbitron'; letter-spacing: 5px;">BY WILDMARCK 2K25</div>
+        <div style="font-family: 'Orbitron'; letter-spacing: 5px;">PRINCE WILDMARCK</div>
         <div class="loader-bar"><div class="loader-progress" id="progress"></div></div>
-        <div style="margin-top: 10px; font-size: 10px; color: #666;">INITIALISATION DU MONDE...</div>
+        <div style="margin-top: 10px; font-size: 10px; color: #666;">CHARGEMENT DU PORTFOLIO...</div>
     </div>
 
-    <div class="cursor-follower"></div>
+    <div class="cursor-follower desktop-only"></div>
 
     <div id="game-ui">
         <nav>
-            <div class="logo">MPW<span style="color:var(--primary)">.</span></div>
+            <div class="logo">PRINCE<span style="color:var(--primary)">.</span></div>
             <div class="nav-menu">
-                <button onclick="navigateTo('home')" class="active">QG Principal</button>
-                <button onclick="navigateTo('skills')">Arsenal</button>
-                <button onclick="navigateTo('projects')">Missions</button>
-                <button onclick="navigateTo('contact')">Transmission</button>
+                <button onclick="navigateTo('home')" class="active">Accueil</button>
+                <button onclick="navigateTo('skills')">Compétences</button>
+                <button onclick="navigateTo('projects')">Projets</button>
+                <button onclick="navigateTo('education')">Formation</button>
+                <button onclick="navigateTo('contact')">Contact</button>
             </div>
         </nav>
 
         <div id="sec-home" class="section-content active">
             <div class="badge" style="background:rgba(0,229,255,0.1); display:inline-block; padding: 5px 10px; margin-bottom: 20px; border: 1px solid var(--primary);">
-                ÉTUDIANT INGÉNIEUR IA
+                DÉVELOPPEUR FULL-STACK
             </div>
             <h1>Prince <br><span>Wildmarck</span></h1>
-            <p>Architecte Digital & Créateur d'Intelligences. Bienvenue dans mon univers. Naviguez pour explorer mes compétences comme dans un monde ouvert.</p>
+            <p>Étudiant en Informatique (IA & Big Data) passionné par le développement web, les bases de données et la cybersécurité. Curieux, autonome et rigoureux, je conçois des applications modernes avec des interfaces dynamiques et sécurisées.</p>
             <div class="stats-hud">
-                <div class="stat"><h3>NVL.3</h3><span>Année Ingénieur</span></div>
-                <div class="stat"><h3>15+</h3><span>Projets Déployés</span></div>
+                <div class="stat"><h3>3+</h3><span>Projets Réalisés</span></div>
+                <div class="stat"><h3>8+</h3><span>Technologies Maîtrisées</span></div>
+                <div class="stat"><h3>100%</h3><span>Engagement</span></div>
             </div>
         </div>
 
         <div id="sec-skills" class="section-content">
-            <h2>Arsenal Tech</h2>
-            <p>Mes armes de choix pour conquérir le digital.</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div style="border-left: 2px solid var(--primary); padding-left: 15px;">
-                    <h4 style="color:white; margin-bottom:5px;">IA & Data</h4>
-                    <span style="color:#888; font-size: 0.9rem;">Python, TensorFlow, PyTorch</span>
-                </div>
-                <div style="border-left: 2px solid var(--suit-blue); padding-left: 15px;">
-                    <h4 style="color:white; margin-bottom:5px;">Web & Mobile</h4>
-                    <span style="color:#888; font-size: 0.9rem;">Flutter, React, Three.js</span>
-                </div>
+            <h2>Compétences Techniques</h2>
+            <p>Mon arsenal technologique pour créer des solutions digitales performantes.</p>
+            
+            <h3>Langages de Programmation</h3>
+            <div class="tech-tags">
+                <span class="tech-tag">PHP (POO)</span>
+                <span class="tech-tag">JavaScript</span>
+                <span class="tech-tag">C++</span>
+                <span class="tech-tag">C#</span>
+                <span class="tech-tag">Java</span>
+                <span class="tech-tag">SQL</span>
+                <span class="tech-tag">HTML/CSS</span>
+            </div>
+            
+            <h3>Technologies Web</h3>
+            <div class="tech-tags">
+                <span class="tech-tag">Tailwind CSS</span>
+                <span class="tech-tag">Bootstrap</span>
+                <span class="tech-tag">React</span>
+            </div>
+            
+            <h3>Systèmes</h3>
+            <div class="tech-tags">
+                <span class="tech-tag">Windows Server</span>
+                <span class="tech-tag">Linux</span>
+            </div>
+            
+            <h3>Domaines d'Expertise</h3>
+            <div class="tech-tags">
+                <span class="tech-tag">Développement Web</span>
+                <span class="tech-tag">Bases de Données</span>
+                <span class="tech-tag">Réseaux</span>
+                <span class="tech-tag">Cybersécurité</span>
             </div>
         </div>
 
         <div id="sec-projects" class="section-content">
-            <h2>Missions Accomplies</h2>
-            <p>Sélection de projets à haut impact.</p>
-            <div style="margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
-                <h3 style="color: var(--primary);">Veline Market</h3>
-                <p style="margin: 10px 0;">Marketplace boostée à l'IA pour la recommandation.</p>
-                <small style="color: var(--suit-blue);">FLUTTER • FIREBASE</small>
+            <h2>Mes Projets</h2>
+            <p>Réalisations concrètes démontrant mes compétences techniques.</p>
+            
+            <div class="project-card">
+                <h3>AutoLoc - Gestion de Location de Véhicules</h3>
+                <p>Application desktop Java avec authentification, gestion des clients et véhicules, suivi des disponibilités et facturation avec impression.</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">Java</span>
+                    <span class="tech-tag">POO</span>
+                    <span class="tech-tag">Desktop App</span>
+                </div>
             </div>
-            <div style="margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
-                <h3 style="color: var(--primary);">TerraG Agritech</h3>
-                <p style="margin: 10px 0;">Plateforme de connexion agriculteurs-consommateurs.</p>
-                <small style="color: var(--suit-blue);">REACT • MONGODB</small>
+            
+            <div class="project-card">
+                <h3>Plateforme Web NAB Consulting</h3>
+                <p>Plateforme présentant l'activité d'une entreprise gabonaise avec espace e-Learning sécurisé.</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">HTML/CSS</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">PHP</span>
+                    <span class="tech-tag">Tailwind CSS</span>
+                </div>
             </div>
-            <div style="margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 10px;">
-                <h3 style="color: var(--primary);">PharmaManager</h3>
-                <p style="margin: 10px 0;">Application de gestion de pharmacie.</p>
-                <small style="color: var(--suit-blue);">C# • MYSQL</small>
+            
+            <div class="project-card">
+                <h3>Gestion de Pharmacie</h3>
+                <p>Logiciel avec connexion sécurisée, gestion de médicaments avec photos et base de données MySQL.</p>
+                <div class="tech-tags">
+                    <span class="tech-tag">C#</span>
+                    <span class="tech-tag">MySQL</span>
+                    <span class="tech-tag">Desktop App</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="sec-education" class="section-content">
+            <h2>Formation</h2>
+            
+            <div class="project-card">
+                <h3>Licence Informatique (IA & Big Data)</h3>
+                <p>Collège de Paris Supérieur Gabon</p>
+                <p style="color: var(--primary); font-weight: bold;">2023 - Présent</p>
+                <p>Compétences en développement web, bases de données, réseaux, cybersécurité et administration Windows Server.</p>
+            </div>
+            
+            <div class="project-card">
+                <h3>Baccalauréat B</h3>
+                <p>Lycée Jean Baptiste OBIANG ETOUGHE, Libreville</p>
+                <p style="color: var(--primary); font-weight: bold;">2023</p>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">Langues</h3>
+            <div class="tech-tags">
+                <span class="tech-tag">Français: Langue maternelle</span>
+                <span class="tech-tag">Anglais: Niveau intermédiaire</span>
+            </div>
+            
+            <h3 style="margin-top: 2rem;">Centres d'Intérêt</h3>
+            <div class="tech-tags">
+                <span class="tech-tag">Échecs</span>
+                <span class="tech-tag">Veille technologique</span>
+                <span class="tech-tag">Lecture & Auto-formation</span>
+                <span class="tech-tag">Projets collaboratifs</span>
+                <span class="tech-tag">Sport & Bien-être</span>
             </div>
         </div>
 
         <div id="sec-contact" class="section-content">
-            <h2>Canal Sécurisé</h2>
-            <p>Prêt à collaborer sur une mission classée "Impossible" ?</p>
-            <a href="mailto:amazing444yt@gmail.com" style="display:inline-block; background: var(--white); color: black; padding: 15px 30px; text-decoration: none; font-weight: bold; font-family: 'Orbitron';">
-                INITIER LE PROTOCOLE MAIL
-            </a>
-            <div style="margin-top: 30px; font-size: 2rem;">
-                <i class="fab fa-whatsapp" style="margin-right: 20px;"></i>
-                <i class="fab fa-linkedin"></i>
+            <h2>Contact</h2>
+            <p>Disponible pour des opportunités de stage ou collaboration.</p>
+            
+            <div class="contact-buttons">
+                <a href="https://wa.me/24177131577" class="contact-btn whatsapp" target="_blank">
+                    <i class="fab fa-whatsapp"></i> WhatsApp: +241 77 13 15 77
+                </a>
+                
+                <a href="mailto:amazing444yt@gmail.com" class="contact-btn email">
+                    <i class="fas fa-envelope"></i> Email: amazing444yt@gmail.com
+                </a>
+                
+                <a href="https://devs-solutions.tech" class="contact-btn company" target="_blank">
+                    <i class="fas fa-briefcase"></i> Visiter Devs-Solutions.tech
+                </a>
+            </div>
+            
+            <p style="margin-top: 2rem; font-size: 0.9rem; color: #888;">
+                <i class="fas fa-map-marker-alt"></i> Libreville, Gabon
+            </p>
+            
+            <div style="margin-top: 2rem; font-size: 2rem;">
+                <a href="https://wa.me/24177131577" style="color: #25D366; margin-right: 20px;" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="mailto:amazing444yt@gmail.com" style="color: var(--white); margin-right: 20px;">
+                    <i class="fas fa-envelope"></i>
+                </a>
+                <a href="https://devs-solutions.tech" style="color: var(--suit-blue);" target="_blank">
+                    <i class="fas fa-globe"></i>
+                </a>
             </div>
         </div>
 
-        <div class="controls-hint">
-            <span class="key">CLIC</span> SUR LE MENU POUR DÉPLACER L'AVATAR
+        <div class="scroll-indicator desktop-only">
+            <i class="fas fa-mouse-pointer"></i> CLIQUEZ SUR LE MENU POUR NAVIGUER
+        </div>
+        
+        <div class="scroll-indicator mobile-only">
+            <i class="fas fa-hand-pointer"></i> TOUCHEZ LE MENU POUR NAVIGUER
         </div>
     </div>
 
@@ -252,13 +497,18 @@
     <script>
         // --- CONFIGURATION DU MONDE ---
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x000000, 0.02); // Brouillard pour profondeur
+        scene.fog = new THREE.FogExp2(0x000000, 0.02);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('world'), antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ 
+            canvas: document.getElementById('world'), 
+            antialias: true, 
+            alpha: true,
+            powerPreference: "high-performance"
+        });
         
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.shadowMap.enabled = true;
 
         // --- LUMIÈRES ---
@@ -269,7 +519,7 @@
         pointLight.position.set(5, 5, 5);
         scene.add(pointLight);
 
-        // --- SOL "GRID" (TRON LEGACY STYLE) ---
+        // --- SOL "GRID" ---
         const gridHelper = new THREE.GridHelper(200, 100, 0x00e5ff, 0x111111);
         scene.add(gridHelper);
 
@@ -285,51 +535,32 @@
         floor.position.y = -0.1;
         scene.add(floor);
 
-        // --- L'AVATAR (L'ÉTUDIANT) ---
-        // Note: Ici je construis un avatar abstrait géométrique aux couleurs demandées
-        // Pour un vrai réalisme "Red Dead", il faudrait charger un fichier .glb ici.
+        // --- L'AVATAR SIMPLIFIÉ POUR MOBILE ---
         const avatarGroup = new THREE.Group();
 
-        // Jambes (Pantalon Bleu Ciel)
-        const legGeo = new THREE.BoxGeometry(0.3, 0.9, 0.3);
-        const pantsMat = new THREE.MeshStandardMaterial({ color: 0x87CEEB }); // Bleu ciel
-        const leftLeg = new THREE.Mesh(legGeo, pantsMat);
-        leftLeg.position.set(-0.2, 0.45, 0);
-        const rightLeg = new THREE.Mesh(legGeo, pantsMat);
-        rightLeg.position.set(0.2, 0.45, 0);
+        // Corps simplifié
+        const bodyGeo = new THREE.BoxGeometry(0.8, 1.8, 0.4);
+        const bodyMat = new THREE.MeshStandardMaterial({ color: 0x87CEEB });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        body.position.y = 0.9;
+        avatarGroup.add(body);
 
-        // Corps (Chemise Blanche + Veste Bleu Ciel)
-        const bodyGeo = new THREE.BoxGeometry(0.8, 0.9, 0.4);
-        const jacketMat = new THREE.MeshStandardMaterial({ color: 0x87CEEB }); // Veste bleu ciel
-        const shirtMat = new THREE.MeshStandardMaterial({ color: 0xffffff }); // Chemise blanche
-        const torso = new THREE.Mesh(bodyGeo, jacketMat);
-        torso.position.y = 1.35;
-        
-        // "Cravate" (détail)
-        const tieGeo = new THREE.BoxGeometry(0.1, 0.6, 0.05);
-        const tieMat = new THREE.MeshStandardMaterial({ color: 0x2979ff }); // Bleu plus foncé
-        const tie = new THREE.Mesh(tieGeo, tieMat);
-        tie.position.set(0, 1.4, 0.22);
-
-        // Tête
-        const headGeo = new THREE.BoxGeometry(0.4, 0.4, 0.4);
-        const skinMat = new THREE.MeshStandardMaterial({ color: 0xffccaa });
-        const head = new THREE.Mesh(headGeo, skinMat);
-        head.position.y = 2;
-
-        avatarGroup.add(leftLeg, rightLeg, torso, tie, head);
-        
-        // Halo lumineux autour de l'étudiant (Effet "Héros")
+        // Halo lumineux
         const glowGeo = new THREE.SphereGeometry(2, 32, 32);
-        const glowMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.05, side: THREE.BackSide });
+        const glowMat = new THREE.MeshBasicMaterial({ 
+            color: 0x00e5ff, 
+            transparent: true, 
+            opacity: 0.05, 
+            side: THREE.BackSide 
+        });
         const glow = new THREE.Mesh(glowGeo, glowMat);
         avatarGroup.add(glow);
 
         scene.add(avatarGroup);
 
-        // --- DÉCOR (PARTICULES DE DONNÉES) ---
+        // --- PARTICULES ---
         const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 2000;
+        const particlesCount = window.innerWidth < 768 ? 500 : 2000; // Moins de particules sur mobile
         const posArray = new Float32Array(particlesCount * 3);
 
         for(let i = 0; i < particlesCount * 3; i++) {
@@ -337,7 +568,7 @@
         }
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const particlesMaterial = new THREE.PointsMaterial({
-            size: 0.1,
+            size: window.innerWidth < 768 ? 0.05 : 0.1, // Particules plus petites sur mobile
             color: 0x00e5ff,
             transparent: true,
             opacity: 0.8
@@ -345,14 +576,13 @@
         const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
         scene.add(particlesMesh);
 
-        // --- LOGIQUE DE JEU ---
-        
-        // Positions des "Niveaux" (Sections) dans le monde 3D
+        // --- LOGIQUE DE NAVIGATION ---
         const levels = {
             home: { x: 0, z: 0, rotY: 0 },
             skills: { x: 10, z: -10, rotY: -Math.PI / 4 },
             projects: { x: -10, z: -20, rotY: Math.PI / 4 },
-            contact: { x: 0, z: -30, rotY: 0 }
+            education: { x: 0, z: -30, rotY: 0 },
+            contact: { x: 10, z: -40, rotY: -Math.PI / 4 }
         };
 
         let currentLevel = 'home';
@@ -368,14 +598,9 @@
             requestAnimationFrame(animate);
             time += 0.01;
 
-            // Animation Idle du personnage (Respiration)
+            // Animation Idle
             if(!isMoving) {
                 avatarGroup.position.y = Math.sin(time * 2) * 0.05;
-                torso.rotation.y = Math.sin(time) * 0.05;
-            } else {
-                // Animation de marche (basique)
-                leftLeg.rotation.x = Math.sin(time * 10) * 0.5;
-                rightLeg.rotation.x = Math.cos(time * 10) * 0.5;
             }
 
             // Flottement des particules
@@ -387,7 +612,7 @@
 
         // --- NAVIGATION INTERACTIVE ---
         window.navigateTo = function(sectionKey) {
-            if (currentLevel === sectionKey) return;
+            if (currentLevel === sectionKey || isMoving) return;
             
             // UI Update
             document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
@@ -402,14 +627,14 @@
             isMoving = true;
             const target = levels[sectionKey];
 
-            // 1. Déplacer l'Avatar vers la position cible
+            // Animation de déplacement
             gsap.to(avatarGroup.position, {
                 x: target.x,
                 z: target.z,
-                duration: 2,
+                duration: 1.5,
                 ease: "power2.inOut",
                 onUpdate: () => {
-                    // La caméra suit l'avatar façon "Third Person Shooter"
+                    // Caméra suit l'avatar
                     gsap.to(camera.position, {
                         x: avatarGroup.position.x,
                         y: avatarGroup.position.y + 3,
@@ -420,14 +645,13 @@
                 }
             });
 
-            // 2. Rotation de l'avatar
             gsap.to(avatarGroup.rotation, {
                 y: target.rotY,
-                duration: 1.5,
+                duration: 1,
                 ease: "power1.out"
             });
 
-            // 3. Fin du mouvement : Afficher le nouveau texte
+            // Afficher le nouveau contenu
             setTimeout(() => {
                 isMoving = false;
                 currentLevel = sectionKey;
@@ -437,37 +661,40 @@
                     { x: -50, opacity: 0 }, 
                     { x: 0, opacity: 1, duration: 0.5 }
                 );
-            }, 2000);
+            }, 1500);
         };
 
-        // --- CURSOR FOLLOWER ---
-        const cursor = document.querySelector('.cursor-follower');
-        document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, {
-                x: e.clientX,
-                y: e.clientY,
-                duration: 0.1
-            });
-            
-            // Parallaxe légère de la caméra sur la souris
-            if(!isMoving) {
-                gsap.to(camera.rotation, {
-                    y: (e.clientX / window.innerWidth - 0.5) * 0.2,
-                    x: (e.clientY / window.innerHeight - 0.5) * 0.2,
-                    duration: 1
+        // --- CURSOR FOLLOWER (DESKTOP ONLY) ---
+        if (window.innerWidth > 768) {
+            const cursor = document.querySelector('.cursor-follower');
+            document.addEventListener('mousemove', (e) => {
+                gsap.to(cursor, {
+                    x: e.clientX,
+                    y: e.clientY,
+                    duration: 0.1
                 });
-            }
-        });
+            });
 
-        // Hover effect sur les liens pour agrandir le curseur
-        document.querySelectorAll('button, a').forEach(link => {
-            link.addEventListener('mouseenter', () => {
-                gsap.to(cursor, { width: 80, height: 80, background: 'rgba(255,255,255,0.1)', duration: 0.3 });
+            // Hover effect
+            document.querySelectorAll('button, a').forEach(link => {
+                link.addEventListener('mouseenter', () => {
+                    gsap.to(cursor, { 
+                        width: 80, 
+                        height: 80, 
+                        background: 'rgba(255,255,255,0.1)', 
+                        duration: 0.3 
+                    });
+                });
+                link.addEventListener('mouseleave', () => {
+                    gsap.to(cursor, { 
+                        width: 40, 
+                        height: 40, 
+                        background: 'transparent', 
+                        duration: 0.3 
+                    });
+                });
             });
-            link.addEventListener('mouseleave', () => {
-                gsap.to(cursor, { width: 40, height: 40, background: 'transparent', duration: 0.3 });
-            });
-        });
+        }
 
         // --- LOADING SEQUENCE ---
         window.addEventListener('load', () => {
@@ -483,19 +710,29 @@
                 if(w === 100) {
                     clearInterval(int);
                     setTimeout(() => {
-                        gsap.to(loader, { opacity: 0, onComplete: () => loader.style.display = 'none' });
+                        gsap.to(loader, { 
+                            opacity: 0, 
+                            onComplete: () => loader.style.display = 'none' 
+                        });
                     }, 500);
                 }
             }, 100);
         });
 
-        // Resize Handler
+        // Resize Handler optimisé pour mobile
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         });
 
+        // Touch support pour mobile
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.nav-menu button, .contact-btn').forEach(button => {
+                button.style.cursor = 'pointer';
+            });
+        }
     </script>
 </body>
 </html>
