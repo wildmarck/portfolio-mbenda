@@ -1,17 +1,14 @@
-# Etape 1 : On utilise Nginx comme base (super léger)
+# Stage 1: Build
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve
 FROM nginx:alpine
-
-# On ajoute des métadonnées
-LABEL maintainer="MBENDA PRINCE WILDMARCK <marclapuissance10@gmail.com>"
-LABEL description="Projet Etudiant DevOps - Portefolio"
-LABEL version="1.0"
-
-# Etape 2 : Copie des fichiers du site
-# On suppose que ton index.html est à la racine. 
-COPY . /usr/share/nginx/html
-
-# Etape 3 : Exposition du port
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
-
-# Etape 4 : Lancement
 CMD ["nginx", "-g", "daemon off;"]

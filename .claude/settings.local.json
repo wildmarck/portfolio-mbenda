@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(npm install)",
+      "Bash(npm run build:*)",
+      "Bash(du:*)",
+      "Bash(powershell -Command \"Get-ChildItem -Directory | ForEach-Object { ''{0:N2} MB - {1}'' -f \\(\\(Get-ChildItem $_FullName -Recurse -File | Measure-Object -Property Length -Sum\\).Sum / 1MB\\), $_Name }\")"
+    ]
+  }
+}

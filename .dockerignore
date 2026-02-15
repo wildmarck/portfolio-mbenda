@@ -1,9 +1,12 @@
+node_modules
+dist
 .git
 .github
 .terraform
-terraform.tfstate
-terraform.tfstate.backup
-terraform.lock.hcl
-Dockerfile
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
 main.tf
 README.md
+Awwwards
+quelques ressources
